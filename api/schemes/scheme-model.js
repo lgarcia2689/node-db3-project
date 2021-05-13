@@ -1,12 +1,11 @@
-function find() { // EXERCISE A
+const db = require('../../data/db-config')
+
+async function find() { // EXERCISE A
   /*
     1A- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`.
     What happens if we change from a LEFT join to an INNER join?
 
-      SELECT
-          sc.*,
-          count(st.step_id) as number_of_steps
-      FROM schemes as sc
+      SELECT count(st.step_id) as number_of_steps FROM schemes as sc
       LEFT JOIN steps as st
           ON sc.scheme_id = st.scheme_id
       GROUP BY sc.scheme_id
@@ -14,10 +13,21 @@ function find() { // EXERCISE A
 
     2A- When you have a grasp on the query go ahead and build it in Knex.
     Return from this function the resulting dataset.
-  */
+  */const rows = await db('posts')
+      .from('schemes as sc')
+      .select('sc.*')
+      .count('st.step_id as number_of_steps')
+      .leftJoin(
+        'steps as st',
+        'sc.scheme_id',
+        'st.scheme_id'
+      )
+      .groupBy('sc.scheme_id')
+      .orderBy('sc.scheme_id')
+      return rows
 }
 
-function findById(scheme_id) { // EXERCISE B
+async function findById(scheme_id) { // EXERCISE B
   /*
     1B- Study the SQL query below running it in SQLite Studio against `data/schemes.db3`:
 
@@ -53,6 +63,7 @@ function findById(scheme_id) { // EXERCISE B
         },
         // etc
       ]
+      
 
     4B- Using the array obtained and vanilla JavaScript, create an object with
     the structure below, for the case _when steps exist_ for a given `scheme_id`:
@@ -83,9 +94,20 @@ function findById(scheme_id) { // EXERCISE B
         "steps": []
       }
   */
+      const rows = await db('posts')
+      .select(' sc.scheme_name','st.*')
+      .from('schemes as sc')
+      .leftJoin(
+        'steps as st',
+        'sc.scheme_id',
+        'st.scheme_id'
+      )
+      .where('sc.scheme_id', 1)
+      .orderBy('sc.step_number')
+      return rows;
 }
 
-function findSteps(scheme_id) { // EXERCISE C
+async function findSteps(scheme_id) { // EXERCISE C
   /*
     1C- Build a query in Knex that returns the following data.
     The steps should be sorted by step_number, and the array
@@ -106,6 +128,18 @@ function findSteps(scheme_id) { // EXERCISE C
         }
       ]
   */
+      // const rows = await db('posts')
+      // .from('schemes as sc')
+      // .select('st.step_id','st.step_number','st.instructions','sc.scheme_name')
+      // .leftJoin(
+      //   'steps as st',
+      //   'sc.scheme_id',
+      //   'st.scheme_id'
+      // )
+      // .groupBy('sc.scheme_id')
+      // .orderBy('st.step_number')
+      // return rows
+
 }
 
 function add(scheme) { // EXERCISE D
